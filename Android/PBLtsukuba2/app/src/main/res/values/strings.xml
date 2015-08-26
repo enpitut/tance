@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">campus dé lunch</string>
+    　　<string name="on_label">ON</string>
+    　　<string name="off_label">OFF</string>
+    <string name="kotoba">お誘いを待つ</string>
+    <string name="action_settings">Settings</string>
+</resources>
