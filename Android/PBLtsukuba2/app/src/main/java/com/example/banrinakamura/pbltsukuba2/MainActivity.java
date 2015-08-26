@@ -3,24 +3,43 @@ package com.example.banrinakamura.pbltsukuba2;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import java.io.IOException;
+import java.util.Calendar;
 
 public class MainActivity extends Activity {
+
+    /** Google Cloud Messagingオブジェクト */
+    private GoogleCloudMessaging gcm;
+    /** コンテキスト */
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        context = getApplicationContext();
+
+        gcm = GoogleCloudMessaging.getInstance(this);
+        registerInBackground();
 
 
         ImageButton btn = (ImageButton) findViewById(R.id.button_main);
@@ -34,6 +53,31 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void registerInBackground() {
+        System.out.println("Hello");
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(context);
+                    }
+                    String regid = gcm.register("9647833057");
+                    System.out.println("registration= "+regid);
+                    msg = "Device registered, registration ID=" + regid;
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                }
+                System.out.println(msg);
+                return msg;
+            }
+            @Override
+            protected void onPostExecute(String msg) {
+            }
+        }.execute(null, null, null);
     }
 
 
@@ -58,4 +102,5 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
