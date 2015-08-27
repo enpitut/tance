@@ -199,6 +199,11 @@
 					46AE2A4F1B89665C0041609B = {
 						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = 6ELN992C86;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					46AE2A631B89665C0041609B = {
 						CreatedOnToolsVersion = 7.0;
