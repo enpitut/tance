@@ -23,7 +23,18 @@ module API
           array.push(key)
         end
       }
+
       return array
+    end
+
+    # STEP3
+    # 誘われた側が，サーバに状態を返答した際の動作を記述する．
+    post :reply do
+      # params[:invitee]
+      # params[:status]
+
+      # return {"return" => 1, "invitee" => "aki", "status" => true}
+      return {"invitee" => "aki", "status" => true}
     end
 
     # resource :memos do
