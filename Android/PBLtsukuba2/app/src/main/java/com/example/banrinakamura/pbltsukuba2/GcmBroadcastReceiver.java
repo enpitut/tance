@@ -26,6 +26,14 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
         String messageType = gcm.getMessageType(intent);
         System.out.println("xxxxxxxxx" + intent.getExtras().toString());
 
+        System.out.println("xxxxxx name = "+ intent.getStringExtra("name"));
+        System.out.println("xxxxxx message = "+ intent.getStringExtra("message"));
+//        try {
+//
+//
+//        } catch (JSONException e) {
+//
+//        }
 
 //        try {
 //            String action = intent.getAction();
