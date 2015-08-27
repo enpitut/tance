@@ -66,6 +66,7 @@ public class MainActivity extends Activity {
         } else {
             Log.i("", "Google Play Services は無効");
         }
+//        GcmBroadcastReceiver GBR = new GcmBroadcastReceiver();
     }
 
     private boolean checkPlayServices() {
@@ -236,7 +237,7 @@ public class MainActivity extends Activity {
     }
 
 
-     @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
