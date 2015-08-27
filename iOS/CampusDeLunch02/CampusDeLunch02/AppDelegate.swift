@@ -39,13 +39,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 	/* デバイストークン取得 */
 	func application( application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData ) {
 		// <>と" "(空白)を取る
-		/*
+		
 		let characterSet: NSCharacterSet = NSCharacterSet( charactersInString: "<>" )
 		let deviceTokenString: String = ( deviceToken.description as NSString )
 			.stringByTrimmingCharactersInSet( characterSet )
 			.stringByReplacingOccurrencesOfString( " ", withString: "" ) as String
 		NSLog(deviceTokenString)
-		*/
+		
 	}
 
     func applicationWillResignActive(application: UIApplication) {
