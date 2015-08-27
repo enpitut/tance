@@ -46,3 +46,4 @@ gem 'grape'
 gem 'therubyracer', :platforms => :ruby
 
 gem 'houston'
+gem 'gcm'

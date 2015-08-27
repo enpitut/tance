@@ -1,4 +1,5 @@
 require 'houston'
+require 'gcm'
 module API
   class Base < Grape::API
 
@@ -28,6 +29,10 @@ module API
       "moriya" => "ab1a33f9768fff4c77313d860487908036fb3eff3cb0a73828ccad9653a26f90"
     }
 
+    tokens_android = {
+      "banri" => "APA91bGw9p-hK7-36QSQyDjpggKuueORzHhKbFeMW5LbH3bWCRYwMzk-8fqXle8Q9XHIczqEiABtLBfTMmUcu-IzKel5SjAS6vHKPLvM-Iqt3KidaMvfXIn7lXaNBVh60j8n_547St9hgajQTinMqtFiSq9pdMM1dg"
+    }
+
 
     # STEP1,2
     # 誘う側がサーバにリクエストをした際の動作を記述する．
@@ -54,6 +59,16 @@ module API
       }
 
       return array
+    end
+
+    #サイレントpush通知(android)
+    get :silentandroid do
+
+      api_key = "AIzaSyBzrhYXPn3w0fxbARde28W9Z8rg6FI2J_M "
+      registration_ids = ["APA91bGw9p-hK7-36QSQyDjpggKuueORzHhKbFeMW5LbH3bWCRYwMzk-8fqXle8Q9XHIczqEiABtLBfTMmUcu-IzKel5SjAS6vHKPLvM-Iqt3KidaMvfXIn7lXaNBVh60j8n_547St9hgajQTinMqtFiSq9pdMM1dg "] # 送りたいregistration_idの配列
+      gcm = GCM.new(api_key)
+      options = {data: {message: "Hello, world", }, collapse_key: "updated_score"}
+      response = gcm.send_notification(registration_ids, options)
     end
 
 
