@@ -3,6 +3,9 @@ package com.example.banrinakamura.pbltsukuba2;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -19,27 +22,207 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class MainActivity extends Activity {
+
+
 
     /** Google Cloud Messagingオブジェクト */
     private GoogleCloudMessaging gcm;
     /** コンテキスト */
     private Context context;
 
+
+    private final String PROJECT_ID = "9647833057";
+    AsyncTask<Void, Void, String> registtask = null;
+    public static final String EXTRA_MESSAGE = "message";
+    public static final String PROPERTY_REG_ID = "registration_id";
+    private static final String PROPERTY_APP_VERSION = "appVersion";
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
+    public String regid = "";
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        context = getApplicationContext();
+        // Play serviceが有効かチェック
+        if (checkPlayServices()) {
+            gcm = GoogleCloudMessaging.getInstance(context);
+            regid = getRegistrationId(context);
+            if(regid.equals("")){
+                regist_id();
+            }
+        } else {
+            Log.i("", "Google Play Services は無効");
+        }
+    }
+
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i("", "Play Service not support");
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private String getRegistrationId(Context context) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        String registrationId = prefs.getString(PROPERTY_REG_ID, "");
+        if (regid.equals("")) {
+            return "";
+        }
+        // アプリケーションがバージョンアップされていた場合、レジストレーションIDをクリア
+        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+        int currentVersion = getAppVersion(context);
+        if (registeredVersion != currentVersion) {
+            return "";
+        }
+        return registrationId;
+    }
+
+    private SharedPreferences getGCMPreferences(Context context) {
+        return getSharedPreferences(MainActivity.class.getSimpleName(),
+                Context.MODE_PRIVATE);
+    }
+
+    private int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException("package not found : " + e);
+        }
+    }
+
+
+    private void storeRegistrationId(Context context, String regId) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        int appVersion = getAppVersion(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PROPERTY_REG_ID, regId);
+        editor.putInt(PROPERTY_APP_VERSION, appVersion);
+        editor.commit();
+    }
+
+    private void regist_id(){
+        if (regid.equals("")) {
+            registtask = new AsyncTask<Void, Void, String>() {
+                @Override
+                protected String doInBackground(Void... params) {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(context);
+                    }
+                    try {
+                        //GCMサーバーへ登録
+                        regid = gcm.register(PROJECT_ID);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //取得したレジストレーションIDを自分のサーバーへ送信して記録しておく
+                    //サーバーサイドでは、この レジストレーションIDを使ってGCMに通知を要求します
+                    registeid2YouServer(regid);
+                    // レジストレーションIDを端末に保存
+                    storeRegistrationId(context, regid);
+                    return null;
+                }
+                @Override
+                protected void onPostExecute(String result) {
+                    registtask = null;
+                }
+            };
+            registtask.execute(null, null, null);
+        }
+    }
+
+    public boolean registeid2YouServer(String regId) {
+
+        //あなたのサーバーのURLと実行ファイル名
+        String serverUrl = "http://tkb-tsss.sakura.ne.jp/tance/sender.php";
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("my_id", regId);
+        try {
+            post(serverUrl, params);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void post(String endpoint, Map<String, String> params)
+            throws IOException {
+        URL url;
+        try {
+            url = new URL(endpoint);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("invalid url: " + endpoint);
+        }
+        StringBuilder bodyBuilder = new StringBuilder();
+        Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> param = iterator.next();
+            bodyBuilder.append(param.getKey()).append('=')
+                    .append(param.getValue());
+            if (iterator.hasNext()) {
+                bodyBuilder.append('&');
+            }
+        }
+        String body = bodyBuilder.toString();
+        byte[] bytes = body.getBytes();
+        HttpURLConnection conn = null;
+        try {
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setFixedLengthStreamingMode(bytes.length);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+            OutputStream out = conn.getOutputStream();
+            out.write(bytes);
+            out.close();
+            int status = conn.getResponseCode();
+            if (status != 200) {
+                throw new IOException("Post failed with error code " + status);
+            }
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        context = getApplicationContext();
-
+        /*context = getApplicationContext();
         gcm = GoogleCloudMessaging.getInstance(this);
-        registerInBackground();
+        registerInBackground();*/
 
 
         ImageButton btn = (ImageButton) findViewById(R.id.button_main);
@@ -55,7 +238,7 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void registerInBackground() {
+   /* private void registerInBackground() {
         System.out.println("Hello");
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -78,7 +261,7 @@ public class MainActivity extends Activity {
             protected void onPostExecute(String msg) {
             }
         }.execute(null, null, null);
-    }
+    }*/
 
 
     @Override
