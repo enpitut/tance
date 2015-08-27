@@ -41,12 +41,10 @@ class CustomCell: UITableViewCell {
 		self.iconImage.image = UIImage(data: imageData)
 		
 		// アイコンをセット
-		/*
 		if friend.checked {
 			self.iconCheck.image = UIImage(named: "icon_tick")
 		}else{
 			self.iconCheck.image = UIImage(named: "icon_not")
 		}
-*/
 	}
 }

@@ -10,26 +10,31 @@ import UIKit
 import CoreLocation
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
-    
+	
     var lm: CLLocationManager!
     var latitude: CLLocationDegrees!
     var longitude: CLLocationDegrees!
 	
-	var waiting: Bool!
+	var checked: Bool!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+		/*
         lm = CLLocationManager();
         longitude = CLLocationDegrees();
         latitude = CLLocationDegrees();
         
         lm.delegate = self
         lm.requestAlwaysAuthorization()
-        //lm.desiredAccuracy = kCLLocationAccuracyBest
+		
+		//lm.desiredAccuracy = kCLLocationAccuracyBest
         //lm.distanceFilter = 1000
-        lm.startUpdatingLocation()
-        
+		
+		lm.startUpdatingLocation()
+		*/
+		
+		//バッジの数を０にする.
+		UIApplication.sharedApplication().applicationIconBadgeNumber = 0
     }
 
     override func didReceiveMemoryWarning() {
@@ -41,17 +46,20 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     func locationManager(manager: CLLocationManager, didUpdateToLocation newLocation: CLLocation, fromLocation oldLocation: CLLocation){
         latitude = newLocation.coordinate.latitude
         longitude = newLocation.coordinate.longitude
-        NSLog("latitude: \(latitude) , longitude: \(longitude)")
-        lm.stopUpdatingLocation()
+        //NSLog("latitude: \(latitude) , longitude: \(longitude)")
+        //lm.stopUpdatingLocation()
 		
-		// 位置情報がキャンパス内かどうか判定します
-		// leftTop
-		let lT: Dictionary = ["lat": 36.111226, "lon": 140.098593]
-		// rightBottom
-		let rB: Dictionary = ["lat": 26.1089814, "lon": 140.1013616]
-		// 位置判定
-		if((lT["lat"] > latitude && latitude > rB["lat"]) && (lT["lon"] < longitude && longitude < rB["lon"])){
+		// 中心点からの距離でキャンパス内にいるかどうか判定
+		let c_latitude = 36.1104929
+		let c_longitude = 140.0994325
+		let current: CLLocation = CLLocation(latitude: latitude, longitude: longitude)
+		let center: CLLocation = CLLocation(latitude: c_latitude, longitude: c_longitude)
+		let distance = center.distanceFromLocation(current)
+		NSLog("\(distance)m")
+		if(distance < 1000){ // 1km以内
 			NSLog("キャンパス内にいます")
+		}else{
+			NSLog("キャンパス外です")
 		}
     }
     
@@ -66,17 +74,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 		let strData = str.dataUsingEncoding(NSUTF8StringEncoding)
 
 		//var url = NSURL(string: "http://153.121.59.91/tance/ApnsPHP-r100/sample_push.php")
-		var url = NSURL(string: "http://153.121.59.91/tance/index.php")
-		var request = NSMutableURLRequest(URL: url!)
+		let url = NSURL(string: "http://153.121.59.91/tance/index.php")
+		let request = NSMutableURLRequest(URL: url!)
 		
 		request.HTTPMethod = "POST"
 		request.HTTPBody = strData
 		
 		//var data = NSURLConnection.sendSynchronousRequest(request, returningResponse: nil)
 		do{
-			var data: NSData = try NSURLConnection.sendSynchronousRequest(request, returningResponse: nil)
+			let data: NSData = try NSURLConnection.sendSynchronousRequest(request, returningResponse: nil)
 			//var dic =  try NSJSONSerialization.JSONObjectWithData(data, options: .MutableContainers) as! NSDictionary
-			var myData:NSString = try NSString(data:data, encoding: 1)!
+			let myData:NSString = NSString(data:data, encoding: 1)!
 			NSLog("\(myData)")
 		}catch let error{
 			NSLog("\(error)")
@@ -86,8 +94,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 	
 	/* スイッチに変更があった時の処理 */
 	@IBAction func changedSwitch(sender: UISwitch) {
-		waiting = sender.on
-		NSLog("\(waiting)")
+		checked = sender.on
+		NSLog("\(checked)")
 	}
 }
 
@@ -161,9 +169,7 @@ class ViewController2: UIViewController, UITableViewDataSource, UITableViewDeleg
 	
 	// セルの内容を変更
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-		//let cell: CustomCell = tableView.dequeueReusableCellWithIdentifier("CustomCell", forIndexPath:  indexPath) as! CustomCell
-		//let cell: CustomCell = tableView.dequeueReusableCellWithIdentifier("CustomCell", forIndexPath: indexPath) as! CustomCell
-		let cell: CustomCell = tableView.dequeueReusableCellWithIdentifier("CustomCell") as! CustomCell
+		let cell: CustomCell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath:  indexPath) as! CustomCell
 		cell.setCell(friends[indexPath.row])
 		return cell
 	}
