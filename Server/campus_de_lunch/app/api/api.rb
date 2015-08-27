@@ -29,7 +29,7 @@ module API
     }
 
 
-    # STEP1
+    # STEP1,2
     # 誘う側がサーバにリクエストをした際の動作を記述する．
     array=[]
     post :confirm do
@@ -56,25 +56,6 @@ module API
       return array
     end
 
-    #STEP2
-    #サイレントpush通知(iOS)
-
-    get :silentios do
-      APN = Houston::Client.development
-      APN.certificate = File.read("/home/vagrant/Server/campus_de_lunch/config/server_certificates_sandbox.pem")
-
-      token = "a88b829f5cb810462640764dc599f82e80513123601f6c70a115e1ab832cc18c"
-
-      notification = Houston::Notification.new(device: token)
-      notification.sound = ''
-
-      notification.content_available = true
-      notification.custom_data = {aki: true}
-
-      APN.push(notification)
-      puts "Error: #{notification.error}." if notification.error
-    end
-
 
     # STEP3
     # 誘われた側が，サーバに状態を返答した際の動作を記述する．
@@ -83,7 +64,19 @@ module API
       # params[:status]
 
       # return {"return" => 1, "invitee" => "aki", "status" => true}
-      return {"invitee" => "aki", "status" => true}
+      # return {"invitee" => "aki", "status" => true}
+
+      APN = Houston::Client.development
+      APN.certificate = File.read("/home/vagrant/Server/campus_de_lunch/config/server_certificates_sandbox.pem")
+
+      notification = Houston::Notification.new(device: tokens[params[:inviter]])
+      notification.sound = ''
+      notification.alert = "Hello, World!"
+      notification.content_available = true
+      notification.custom_data = {inviter: params[:inverter], invitee: params[:invitee], status: params[:status]}
+
+      APN.push(notification)
+      puts "Error: #{notification.error}." if notification.error
     end
 
   end
