@@ -44,3 +44,6 @@ group :development, :test do
 end
 gem 'grape'
 gem 'therubyracer', :platforms => :ruby
+
+gem 'houston'
+gem 'gcm'
