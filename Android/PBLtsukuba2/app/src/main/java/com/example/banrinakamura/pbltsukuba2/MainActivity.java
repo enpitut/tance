@@ -38,14 +38,6 @@ import java.util.Map;
 
 public class MainActivity extends Activity {
 
-
-
-    /** Google Cloud Messagingオブジェクト */
-    private GoogleCloudMessaging gcm;
-    /** コンテキスト */
-    private Context context;
-
-
     private final String PROJECT_ID = "9647833057";
     AsyncTask<Void, Void, String> registtask = null;
     public static final String EXTRA_MESSAGE = "message";
@@ -53,7 +45,12 @@ public class MainActivity extends Activity {
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
+
+    /** Google Cloud Messagingオブジェクト */
+    private GoogleCloudMessaging gcm;
     public String regid = "";
+    /** コンテキスト */
+    private Context context;
 
     @Override
     public void onStart() {
@@ -158,7 +155,7 @@ public class MainActivity extends Activity {
     public boolean registeid2YouServer(String regId) {
 
         //あなたのサーバーのURLと実行ファイル名
-        String serverUrl = "http://tkb-tsss.sakura.ne.jp/tance/sender.php";
+        String serverUrl = "http://153.121.59.91/tance/sender.php";
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("my_id", regId);
@@ -238,33 +235,8 @@ public class MainActivity extends Activity {
         });
     }
 
-   /* private void registerInBackground() {
-        System.out.println("Hello");
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                String msg = "";
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(context);
-                    }
-                    String regid = gcm.register("9647833057");
-                    System.out.println("registration= "+regid);
-                    msg = "Device registered, registration ID=" + regid;
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
-                }
-                System.out.println(msg);
-                return msg;
-            }
-            @Override
-            protected void onPostExecute(String msg) {
-            }
-        }.execute(null, null, null);
-    }*/
 
-
-    @Override
+     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
