@@ -169,9 +169,7 @@ class ViewController2: UIViewController, UITableViewDataSource, UITableViewDeleg
 	
 	// セルの内容を変更
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-		//let cell: CustomCell = tableView.dequeueReusableCellWithIdentifier("CustomCell", forIndexPath:  indexPath) as! CustomCell
-		//let cell: CustomCell = tableView.dequeueReusableCellWithIdentifier("CustomCell") as! CustomCell
-		var cell = tableView.dequeueReusableCellWithIdentifier("Cell") as! CustomCell
+		let cell: CustomCell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath:  indexPath) as! CustomCell
 		cell.setCell(friends[indexPath.row])
 		return cell
 	}
