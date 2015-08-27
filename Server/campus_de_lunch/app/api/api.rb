@@ -58,12 +58,13 @@ module API
       puts "Error: #{notification.error}." if notification.error
     end
 
-    #サイレントpush通知(iOS)
+    #サイレントpush通知(android)
     get :silentandroid do
+
       api_key = "AIzaSyBzrhYXPn3w0fxbARde28W9Z8rg6FI2J_M "
       registration_ids = ["APA91bGw9p-hK7-36QSQyDjpggKuueORzHhKbFeMW5LbH3bWCRYwMzk-8fqXle8Q9XHIczqEiABtLBfTMmUcu-IzKel5SjAS6vHKPLvM-Iqt3KidaMvfXIn7lXaNBVh60j8n_547St9hgajQTinMqtFiSq9pdMM1dg "] # 送りたいregistration_idの配列
       gcm = GCM.new(api_key)
-      options = {data: {"message": "testing push notification"}, collapse_key: "updated_score"}
+      options = {data: {message: "Hello, world", }, collapse_key: "updated_score"}
       response = gcm.send_notification(registration_ids, options)
     end
 
