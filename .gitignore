@@ -1,5 +1,5 @@
 # 次のファイルを無視します
-/.DS_Store/
-/iOS/CampusDeLunch02/.DS_Store
-/iOS/CampusDeLunch02/CampusDeLunch02.xcodeproj
-/iOS/CampusDeLunch02/CampusDeLunch02.xcodeproj/project.pbxproj
+.DS_Store/
+iOS/CampusDeLunch02/.DS_Store
+iOS/CampusDeLunch02/CampusDeLunch02.xcodeproj
+iOS/CampusDeLunch02/CampusDeLunch02.xcodeproj/project.pbxproj
