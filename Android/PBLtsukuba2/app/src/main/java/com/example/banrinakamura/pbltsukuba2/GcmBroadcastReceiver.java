@@ -9,6 +9,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.content.WakefulBroadcastReceiver;
+import android.util.Log;
+import android.widget.Switch;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -38,9 +41,12 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         System.out.println("xxxxxx message = " + intent.getStringExtra("message"));
 
 
-        // GPS
+
         mLocationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        // GPS
+        //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        //Wifi
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 
 
 
@@ -89,9 +95,24 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         // GPS
         double lat = location.getLatitude();
         double lng = location.getLongitude();
-        double alt = location.getAltitude();
-        double acc = location.getAccuracy();
-        System.out.println(lat + ","  + lng + "," + alt + "," + acc);
+        System.out.println(lat + "," + lng);
+
+        //２点間の距離
+        //中心点を指定
+        double centerLat = 36.1104929;
+        double centerLng = 140.0994325;
+        // 結果を格納するための配列を生成
+        float[] results = new float[3];
+        // 距離計算
+        Location.distanceBetween(centerLat, centerLng, lat, lng, results);
+
+        // 結果を表示
+        Log.v("Distance", "results[0]: " + results[0]); // 距離（メートル）
+        Log.v("Kakudo1", "results[1]: " + results[1]); // 始点から終点までの方位角
+        Log.v("Kakudo2", "results[2]: " + results[2]); // 終点から始点までの方位角
+
+       boolean switchStatement = MainActivity.getSwitchstatement();
+
 
 
         mLocationManager.removeUpdates(this);

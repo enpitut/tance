@@ -19,8 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -45,6 +47,7 @@ public class MainActivity extends Activity implements LocationListener {
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
+    public static Switch sw1;
 
     /** Google Cloud Messagingオブジェクト */
     private GoogleCloudMessaging gcm;
@@ -219,7 +222,7 @@ public class MainActivity extends Activity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        sw1 = (Switch) findViewById(R.id.switch1);
 
         /*context = getApplicationContext();
         gcm = GoogleCloudMessaging.getInstance(this);
@@ -280,5 +283,10 @@ public class MainActivity extends Activity implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+   public static boolean getSwitchstatement(){
+
+        return sw1.isChecked();
     }
 }
