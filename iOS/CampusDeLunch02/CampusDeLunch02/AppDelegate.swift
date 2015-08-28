@@ -32,6 +32,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 	let myName: String? = "aki"
 	// フレンドリスト
 	var friendList:[Friend] = [Friend]()
+	// お誘い待ちがどうかの状態
+	var waitState: Bool! = true
 
 
 	func application( application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
@@ -123,7 +125,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 		case .Active:
 			/* アクティブ時 処理 */
 			NSLog("Active!")
-			
+			/*
+			 *
+			 * Step.4 Server -> Device(Sasower)
+			 *
+			 */
 			if inviter == myName {
 				// 私は「さそわー」です（誘う人）
 				NSLog("I am SASOWER.")
@@ -135,11 +141,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 		case .Background:
 			/* バックグラウンド時 処理 */
 			NSLog("Background..")
-			
-			if inviter == myName {
-				// 私は「さそわー」です（誘う人）
-				NSLog("I am SASOWER.")
-			}else{
+			/*
+			 *
+			 * Step.2 Server -> Device(Sasowee)
+			 *
+			 */
+			if invitee == myName {
 				// 私は「さそうぃー」です（誘われる人）
 				NSLog("I am SASOWEE.")
 				
@@ -147,15 +154,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 				let current = CLLocation(latitude: latitude, longitude: longitude)
 				let center = CLLocation(latitude: c_latitude, longitude: c_longitude)
 				distance = center.distanceFromLocation(current)
-				//NSLog("\(distance)m")
-				if(distance < 1000){ // 1km以内
+				
+				if(distance < radius) && (waitState == true){
+					// キャンパス内かつ待っている状態
 					NSLog("キャンパス内にいます")
 					status = "1"
 				}else{
-					NSLog("キャンパス外です")
+					// キャンパス外または待ち状態でない
+					NSLog("キャンパス外であるか待ち状態ではありません")
 					status = "0"
 				}
 				
+				
+				/*
+				 *
+				 * Step.3 Device(Sasowee) -> Server
+				 *
+				 */
 				/* パラメータをポストする */
 				let postParam = "inviter=" + inviter + "&invitee=" + invitee + "&status=" + String(status)
 				NSLog("\(postParam)");
