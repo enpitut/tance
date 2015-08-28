@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -17,7 +21,11 @@ import java.util.Iterator;
  * Created by Owner_2 on 2015/08/26.
  */
 
-public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
+public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements LocationListener {
+
+    // GPS用
+    private LocationManager mLocationManager;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -26,8 +34,25 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
         String messageType = gcm.getMessageType(intent);
         System.out.println("xxxxxxxxx" + intent.getExtras().toString());
 
-        System.out.println("xxxxxx name = "+ intent.getStringExtra("name"));
-        System.out.println("xxxxxx message = "+ intent.getStringExtra("message"));
+        System.out.println("xxxxxx name = " + intent.getStringExtra("name"));
+        System.out.println("xxxxxx message = " + intent.getStringExtra("message"));
+
+
+        // GPS
+        mLocationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
+
+
+        //double lat=Double.valueOf(locationManager.getLatitude());
+        //double lon=Double.valueOf(locationManager.getLongitude());
+
+        //System.out.println(lat);
+        //System.out.println(lon);
+
+
+
+
 //        try {
 //
 //
@@ -57,5 +82,33 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
         // Start the service, keeping the device awake while it is launching.
         startWakefulService(context, (intent.setComponent(comp)));
         setResultCode(Activity.RESULT_OK);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        // GPS
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
+        double alt = location.getAltitude();
+        double acc = location.getAccuracy();
+        System.out.println(lat + ","  + lng + "," + alt + "," + acc);
+
+
+        mLocationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }

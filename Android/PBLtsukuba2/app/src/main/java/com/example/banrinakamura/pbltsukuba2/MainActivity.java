@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements LocationListener {
 
     private final String PROJECT_ID = "9647833057";
     AsyncTask<Void, Void, String> registtask = null;
@@ -51,6 +51,7 @@ public class MainActivity extends Activity {
     public String regid = "";
     /** コンテキスト */
     private Context context;
+
 
     @Override
     public void onStart() {
@@ -218,6 +219,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         /*context = getApplicationContext();
         gcm = GoogleCloudMessaging.getInstance(this);
         registerInBackground();*/
@@ -259,4 +262,23 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 }
