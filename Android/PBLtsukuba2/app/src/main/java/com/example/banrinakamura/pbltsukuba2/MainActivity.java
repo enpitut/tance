@@ -28,6 +28,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import org.apache.http.client.methods.HttpPost;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -236,6 +238,7 @@ public class MainActivity extends Activity implements LocationListener {
                 // TODO Auto-generated method stub
                 // インテントのインスタンス生成
                 Intent intent = new Intent(MainActivity.this, SubActivity.class);
+
                 // 次画面のアクティビティ起動
                 startActivity(intent);
             }
