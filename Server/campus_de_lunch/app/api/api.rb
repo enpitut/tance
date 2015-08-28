@@ -37,7 +37,7 @@ module API
             notification.sound = ''
             notification.alert = "Hello, World!"
             notification.content_available = true
-            notification.custom_data = {inviter: params[:inverter], invitee: key, status: ''}
+            notification.custom_data = {inviter: params[:inviter], invitee: key, status: ''}
 
             APN.push(notification)
             puts "Error: #{notification.error}." if notification.error
@@ -47,7 +47,7 @@ module API
             api_key = "AIzaSyBzrhYXPn3w0fxbARde28W9Z8rg6FI2J_M"
             registration_ids = ["APA91bGw9p-hK7-36QSQyDjpggKuueORzHhKbFeMW5LbH3bWCRYwMzk-8fqXle8Q9XHIczqEiABtLBfTMmUcu-IzKel5SjAS6vHKPLvM-Iqt3KidaMvfXIn7lXaNBVh60j8n_547St9hgajQTinMqtFiSq9pdMM1dg"] # 送りたいregistration_idの配列
             gcm = GCM.new(api_key)
-            options = {data: {inviter: params[:inverter], invitee: key, status: ''}, collapse_key: "updated_score"}
+            options = {data: {inviter: params[:inviter], invitee: key, status: ''}, collapse_key: "updated_score"}
             response = gcm.send_notification(registration_ids, options)
           end
 
@@ -84,7 +84,6 @@ module API
         response = gcm.send_notification(registration_ids, options)
       end
     end
-
 
   end
 end
