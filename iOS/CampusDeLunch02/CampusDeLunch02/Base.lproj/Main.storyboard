@@ -53,7 +53,7 @@
         <!--View Controller2-->
         <scene sceneID="tL7-sE-qxC">
             <objects>
-                <viewController id="pAY-kl-jB9" customClass="ViewController2" customModule="CampusDeLunch02" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ViewController2" useStoryboardIdentifierAsRestorationIdentifier="YES" id="pAY-kl-jB9" customClass="ViewController2" customModule="CampusDeLunch02" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="htL-PF-1b0"/>
                         <viewControllerLayoutGuide type="bottom" id="OkH-8h-8kE"/>

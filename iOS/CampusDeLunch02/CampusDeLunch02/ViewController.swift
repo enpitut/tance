@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class ViewController: UIViewController, CLLocationManagerDelegate {
+class ViewController: UIViewController {
 	var status: Bool!
     
     override func viewDidLoad() {
@@ -27,30 +27,29 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 	
 	/* お誘いボタンをした時に実行される処理 */
 	@IBAction func pushBtn(sender: AnyObject) {
+		
 		let delegate: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 		let myName: String = delegate.myName!
-		let str = "name=" + myName
+		let str = "inviter=" + myName
 		let strData = str.dataUsingEncoding(NSUTF8StringEncoding)
 
-		let url = NSURL(string: "http://153.121.59.91/tance/index.php")
+//		let url = NSURL(string: "http://153.121.59.91/tance/index.php")
+		let url = NSURL(string: "http://210.140.68.18/api/confirm")
 		let request = NSMutableURLRequest(URL: url!)
 		
 		request.HTTPMethod = "POST"
 		request.HTTPBody = strData
 		
 		// PHP側でechoされた値を取得
-		/*
-		var data = NSURLConnection.sendSynchronousRequest(request, returningResponse: nil)
-		*/
 		do{
 			let data: NSData = try NSURLConnection.sendSynchronousRequest(request, returningResponse: nil)
-			//var dic =  try NSJSONSerialization.JSONObjectWithData(data, options: .MutableContainers) as! NSDictionary
 			let myData:NSString = NSString(data:data, encoding: 1)!
-			NSLog("\(myData)")
+			NSLog("api/confirm: \(myData)")
 		}catch let error{
 			NSLog("\(error)")
 			return
 		}
+		
 	}
 	
 	/* スイッチに変更があった時の処理 */
@@ -75,12 +74,10 @@ class ViewController2: UIViewController, UITableViewDataSource, UITableViewDeleg
         let appDelegate:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         appDelegate.viewController2 = self
         self.setupFriends()
-        
+        /*
         self.tableView?.delegate = self
         self.tableView?.dataSource = self
-        
-        //tableView?.delegate = self
-        //tableView?.dataSource = self
+		*/
     }
     
     override func didReceiveMemoryWarning() {
@@ -89,16 +86,28 @@ class ViewController2: UIViewController, UITableViewDataSource, UITableViewDeleg
     }
     
     func setupFriends() {
-		let f1 = Friend(name: "Jun Obata", imageUrl: NSURL(string: "http://153.121.59.91/tance/thumb_data/thumb_obata.png"), checked: true)
-		let f2 = Friend(name: "Banri Nakamura", imageUrl: NSURL(string: "http://153.121.59.91/tance/thumb_data/thumb_banri.png"), checked: false)
-		let f3 = Friend(name: "Yu Hayakawa", imageUrl: NSURL(string: "http://153.121.59.91/tance/thumb_data/thumb_hayakawa.png"), checked: true)
-		let f4 = Friend(name: "Yudai Moriya", imageUrl: NSURL(string: "http://153.121.59.91/tance/thumb_data/thumb_moriya.png"), checked: false)
+		let f1 = Friend(name: "obata", status: "1")
+		let f2 = Friend(name: "banri", status: "0")
+		let f3 = Friend(name: "haya", status: "1")
+		let f4 = Friend(name: "moriya", status: "0")
 		
         friends.append(f1)
         friends.append(f2)
         friends.append(f3)
 		friends.append(f4)
     }
+	
+	/* 友達追加処理 */
+	func addFriend(name: String, status: String){
+		let f = Friend(name: name, status: status)
+		friends.append(f)
+	}
+	
+	/* 友達一覧更新 */
+	func updateFriend(){
+		self.tableView?.delegate = self
+		self.tableView?.dataSource = self
+	}
 	
 	/* Table View に関する処理 */
 	// セクション数

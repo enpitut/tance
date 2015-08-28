@@ -13,6 +13,16 @@ class CustomCell: UITableViewCell {
     @IBOutlet weak var name: UILabel!
     @IBOutlet weak var iconImage: UIImageView!
 	@IBOutlet weak var iconCheck: UIImageView!
+	
+	// プロフィール画像用連想配列
+	var thumbDic: Dictionary<String, String> = [
+		"aki": "thumb_aki",
+		"banri": "thumb_banri",
+		"haya": "thumb_haya",
+		"moriya": "thumb_moriya",
+		"obata": "thumb_obata",
+	]
+	
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -29,6 +39,7 @@ class CustomCell: UITableViewCell {
 		// 名前をセット
 		self.name.text = friend.name as String
 		// 画像の読み込み(URLから)
+		/*
 		var imageData: NSData
 		do{
 			// ファイルダウンロード
@@ -39,9 +50,13 @@ class CustomCell: UITableViewCell {
 		}
 		// 画像をセット
 		self.iconImage.image = UIImage(data: imageData)
+		*/
+		
+		// 画像の読み込み（デバイスから）
+		self.iconImage.image = UIImage(named: thumbDic[friend.name as String]!)
 		
 		// アイコンをセット
-		if friend.checked {
+		if friend.status == "1" {
 			self.iconCheck.image = UIImage(named: "icon_tick")
 		}else{
 			self.iconCheck.image = UIImage(named: "icon_not")
