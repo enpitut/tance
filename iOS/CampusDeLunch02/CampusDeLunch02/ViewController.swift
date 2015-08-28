@@ -72,7 +72,8 @@ class ViewController2: UIViewController, UITableViewDataSource, UITableViewDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        let appDelegate:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        appDelegate.viewController2 = self
         self.setupFriends()
         
         self.tableView?.delegate = self
@@ -116,6 +117,16 @@ class ViewController2: UIViewController, UITableViewDataSource, UITableViewDeleg
 		cell.setCell(friends[indexPath.row])
 		return cell
 	}
+    func refreshCell(name: String, status: Int){
+        if status == 1{
+            //参加するとき
+            
+        }else{
+            //不参加のとき
+            
+        }
+        
+    }
 }
 
 
