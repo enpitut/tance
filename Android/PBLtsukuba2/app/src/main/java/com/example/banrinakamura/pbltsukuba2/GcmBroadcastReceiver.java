@@ -46,6 +46,9 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         System.out.println("xxxxxx name = " + intent.getStringExtra("name"));
         System.out.println("xxxxxx message = " + intent.getStringExtra("message"));
 
+        //さそわ～（inviter）
+        System.out.println("xxxxxx inviter = " + intent.getStringExtra("inviter"));
+
         mContext = context;
 
         mLocationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
@@ -53,7 +56,7 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         //Wifi
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-        
+
 
         //double lat=Double.valueOf(locationManager.getLatitude());
         //double lon=Double.valueOf(locationManager.getLongitude());
@@ -99,6 +102,7 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
     public void onLocationChanged(Location location) {
 
         System.out.println("onLocationChangedに行きました。");
+
         // GPS
         double lat = location.getLatitude();
         double lng = location.getLongitude();
@@ -118,26 +122,36 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         Log.v("Kakudo1", "results[1]: " + results[1]); // 始点から終点までの方位角
         Log.v("Kakudo2", "results[2]: " + results[2]); // 終点から始点までの方位角
 
-       boolean switchStatement = MainActivity.getSwitchstatement();
+        boolean switchStatement = MainActivity.getSwitchstatement();
         Log.v("Switch", "switchStatement: " + switchStatement); // スイッチ ONはtrue OFFはfalse
 
-       int flag;
+        int status;
         if(results[0]<=500 && switchStatement==true){
-            flag = 1;
+            status = 1;
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
+            builder.setSmallIcon(R.drawable.btn_main);
 
-            builder.setSmallIcon(R.drawable.ic_launcher);
+            builder.setContentTitle("campus dé lunch"); // 1行目
+            builder.setContentText("inviter" + "さんからお誘いが届きました。"); // 2行目
+            //builder.setSubText(""); // 3行目
+            //builder.setContentInfo("Info"); // 右端
+            builder.setWhen(System.currentTimeMillis()); // タイムスタンプ（現在時刻、メール受信時刻、カウントダウンなどに使用）
+
+            // 通知時の音・バイブ・ライト
+            builder.setDefaults(Notification.DEFAULT_SOUND
+                    | Notification.DEFAULT_VIBRATE
+                    | Notification.DEFAULT_LIGHTS);
+
 
             NotificationManagerCompat manager = NotificationManagerCompat.from(mContext);
-//            manager.notify(NOTIFICATION_MINIMUM_ID, builder.build());
             manager.notify(1, builder.build());
 
         }else{
-            flag = 0;
+            status = 0;
         }
 
-        Log.v("OKorNG", "flag: " + flag); //誘いOK flag=1  誘いNG flag=0
+        Log.v("OKorNG", "status: " + status); //誘いOK status=1  誘いNG status=0
 
 
 
