@@ -11,7 +11,7 @@ import CoreLocation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
-
+	
     var window: UIWindow?
 	
 	var timer: NSTimer!
@@ -20,6 +20,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 	var lm: CLLocationManager!
 	var latitude: CLLocationDegrees!
 	var longitude: CLLocationDegrees!
+	var current: CLLocation!
+	// 筑波大学中心地点
+	let c_latitude = 36.1104929
+	let c_longitude = 140.0994325
+	var center: CLLocation!
+	// 2点間の距離と閾値半径（m）
+	var distance: Double = 0.0
+	let radius: Double = 500.0
+	// 自分の名前(各自自分の名前を設定する)
+	let myName: String? = "Akihisa Kodera"
 	
 	func application( application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		
@@ -93,7 +103,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 	
-	func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+	func application(application: UIApplication, var didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
 		print(userInfo)
 		print(userInfo["inviter"]) // 誘った人の名前
 		print(userInfo["invitee"]) // 誘われた人の名前
@@ -106,9 +116,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 			/* バックグラウンド処理 */
 			
 			if(userInfo["invitee"] == nil){
-				// 私は「さそわー」です（誘う人）
-			}else{
 				// 私は「さそうぃー」です（誘われる人）
+				userInfo["invitee"] = myName
+				
+				// 中心点からの距離でキャンパス内にいるかどうか判定
+				current = CLLocation(latitude: latitude, longitude: longitude)
+				center = CLLocation(latitude: c_latitude, longitude: c_longitude)
+				distance = center.distanceFromLocation(current)
+				//NSLog("\(distance)m")
+				if(distance < 1000){ // 1km以内
+					NSLog("キャンパス内にいます")
+				}else{
+					NSLog("キャンパス外です")
+				}
+				
+			}else{
+				// 私は「さそわー」です（誘う人）
 			}
 			
 		case .Inactive:
@@ -124,19 +147,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 		NSLog("latitude: \(latitude) , longitude: \(longitude)")
 		// LocationManagerを停止させる
 		//lm.stopUpdatingLocation()
-		
-		// 中心点からの距離でキャンパス内にいるかどうか判定
-		let c_latitude = 36.1104929
-		let c_longitude = 140.0994325
-		let current: CLLocation = CLLocation(latitude: latitude, longitude: longitude)
-		let center: CLLocation = CLLocation(latitude: c_latitude, longitude: c_longitude)
-		let distance = center.distanceFromLocation(current)
-		//NSLog("\(distance)m")
-		if(distance < 1000){ // 1km以内
-			NSLog("キャンパス内にいます")
-		}else{
-			NSLog("キャンパス外です")
-		}
 	}
 	
 	/* 位置情報取得失敗時に実行される関数 */

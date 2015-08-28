@@ -10,11 +10,7 @@ import UIKit
 import CoreLocation
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
-
-	var checked: Bool!
-	
-	// 自分の名前(各自自分の名前を設定する)
-	let myName: String = "Akihisa Kodera"
+	var status: Bool!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +27,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 	
 	/* お誘いボタンをした時に実行される処理 */
 	@IBAction func pushBtn(sender: AnyObject) {
+		let delegate: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+		let myName: String = delegate.myName!
 		let str = "name=" + myName
 		let strData = str.dataUsingEncoding(NSUTF8StringEncoding)
 
@@ -57,8 +55,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 	
 	/* スイッチに変更があった時の処理 */
 	@IBAction func changedSwitch(sender: UISwitch) {
-		checked = sender.on
-		NSLog("\(checked)")
+		status = sender.on
+		NSLog("\(status)")
 	}
 }
 
