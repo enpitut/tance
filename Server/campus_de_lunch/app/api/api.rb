@@ -35,7 +35,7 @@ module API
 
             notification = Houston::Notification.new(device: tokens[key])
             notification.sound = ''
-            notification.alert = "Hello, World!"
+            notification.alert = "STEP2: Detected Confirm. FROM: #{params[:inviter]} TO: #{key}"
             notification.content_available = true
             notification.custom_data = {inviter: params[:inviter], invitee: key, status: ''}
 
@@ -70,7 +70,7 @@ module API
 
         notification = Houston::Notification.new(device: tokens[params[:inviter]])
         notification.sound = ''
-        # notification.alert = "Hello, World!"
+        notification.alert = "STEP4: Detected Reply. FROM: #{params[:inviter]} TO: #{params[:invitee]}"
         notification.content_available = true
         notification.custom_data = {inviter: params[:invirter], invitee: params[:invitee], status: params[:status]}
 
