@@ -10,8 +10,10 @@ import UIKit
 import CoreLocation
 
 class ViewController: UIViewController {
-	var status: Bool!
-    
+	
+	/* グローバル変数をもつインスタンス */
+	let appDel:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 		
@@ -24,7 +26,11 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-	
+	/*
+	 *
+	 * Step.1 Device(Sasower) -> Server
+	 *
+	 */
 	/* お誘いボタンをした時に実行される処理 */
 	@IBAction func pushBtn(sender: AnyObject) {
 		/* POSTされないように一時的にコメントアウトしています
@@ -54,8 +60,8 @@ class ViewController: UIViewController {
 	
 	/* スイッチに変更があった時の処理 */
 	@IBAction func changedSwitch(sender: UISwitch) {
-		status = sender.on
-		NSLog("\(status)")
+		appDel.waitState = sender.on
+		NSLog("switch: \(appDel.waitState)")
 	}
 }
 
