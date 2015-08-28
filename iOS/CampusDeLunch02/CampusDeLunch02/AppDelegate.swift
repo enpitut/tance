@@ -12,7 +12,6 @@ import CoreLocation
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
 
-	
     var window: UIWindow?
     var viewController2: ViewController2!
 	var timer: NSTimer!
@@ -31,6 +30,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 	let radius: Double = 500.0
 	// 自分の名前(各自自分の名前を設定する)
 	let myName: String? = "aki"
+	// フレンドリスト
+	var friendList:[Friend] = [Friend]()
+
 
 	func application( application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		
@@ -113,20 +115,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 		// 送信用パラメータ
 		let inviter: String = userInfo["inviter"] as! String
 		let invitee: String = userInfo["invitee"] as! String
-		/*
-		var invitee: String?
-		invitee = userInfo["invitee"] as? String
-		*/
 		var status: NSString
 		status = userInfo["status"] as! NSString
-		//var status = 0 as! NSNumber
-		/* ["status"]がNSString型である場合に実行する
-		if let _status = userInfo["status"] as? NSString {
-			var inCampus = _status as NSString
-			print(inCampus)
-		}
-		*/
-		
 		
 		// プッシュ通知が来たときデバイスの状況に合わせて振り分け
 		switch(application.applicationState) {
@@ -134,18 +124,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 			/* アクティブ時 処理 */
 			NSLog("Active!")
 			
-			/* ステータスをチェックして相手が参加できるかどうか確認する */
-			if status == "1" {
-				NSLog("test")
-				// 誘った相手が参加できる：CustomCellを追加する
-				let storybiard = UIStoryboard(name: "Main", bundle: nil)
-				let vc2 = storybiard.instantiateViewControllerWithIdentifier("ViewController2") as! ViewController2
-				//vc2.addFriend(invitee, status: status as String)
-				//vc2.updateFriend()
-				//vc2.cell.setCell(Friend(name: invitee, status: status as String))
-				
-			}else{
-				// 誘った相手が参加できない：特に何もしない
+			if inviter == myName {
+				// 私は「さそわー」です（誘う人）
+				NSLog("I am SASOWER.")
+				// 相手の参加/不参加に関わらずフレンドリストに追加
+				let f = Friend(name: invitee, status: status as String)
+				friendList.append(f)
 			}
 			
 		case .Background:
@@ -171,60 +155,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 					NSLog("キャンパス外です")
 					status = "0"
 				}
+				
+				/* パラメータをポストする */
+				let postParam = "inviter=" + inviter + "&invitee=" + invitee + "&status=" + String(status)
+				NSLog("\(postParam)");
+				let strData = postParam.dataUsingEncoding(NSUTF8StringEncoding)
+				
+				//let url = NSURL(string: "http://153.121.59.91/tance/index.php")
+				let url = NSURL(string: "http://210.140.68.18/api/reply")
+				let request = NSMutableURLRequest(URL: url!)
+				
+				request.HTTPMethod = "POST"
+				request.HTTPBody = strData
+				
+				// PHP側でreturnされた値を取得
+				do{
+					let data: NSData = try NSURLConnection.sendSynchronousRequest(request, returningResponse: nil)
+					NSLog("requestしました")
+					let myData:NSString = NSString(data:data, encoding: 1)!
+					NSLog("api/reply: \(myData)")
+				}catch let error{
+					NSLog("\(error)")
+					return
+				}
 			}
-			
-			
-			/* パラメータをポストする */
-			let postParam = "inviter=" + inviter + "&invitee=" + invitee + "&status=" + String(status)
-			NSLog("\(postParam)");
-			let strData = postParam.dataUsingEncoding(NSUTF8StringEncoding)
-			
-			//let url = NSURL(string: "http://153.121.59.91/tance/index.php")
-			let url = NSURL(string: "http://210.140.68.18/api/reply")
-			let request = NSMutableURLRequest(URL: url!)
-			
-			request.HTTPMethod = "POST"
-			request.HTTPBody = strData
-			
-			// PHP側でechoされた値を取得
-			do{
-				let data: NSData = try NSURLConnection.sendSynchronousRequest(request, returningResponse: nil)
-				NSLog("requestしました")
-				let myData:NSString = NSString(data:data, encoding: 1)!
-				NSLog("api/reply: \(myData)")
-			}catch let error{
-				NSLog("\(error)")
-				return
-			}
-			
 			
 		case .Inactive:
 			/* インアクティブ時 処理 */
 			NSLog("Inactive")
 		}
-
-		/*
-		 *
-		 * 誘う側が全て揃ったデータを取得し、TableViewを更新する処理
-		 *
-		 */
-/*
-        if inviter == myName{
-			/* 誘う側の処理 */
-			NSLog("I am SASOWER!")
-            if status == 1{
-                //参加できる人の処理
-				let storybiard = UIStoryboard(name: "Main", bundle: nil)
-				let viewcontroller2 = storybiard.instantiateViewControllerWithIdentifier("ViewController2") as! ViewController2
-				//viewcontroller2.addFriends(invitee!, imageUrl: NSURL(string: imageUrl!)!, status: status!)
-            }else{
-                //参加できない人の処理
-            }
-        }else{
-			/* 誘われる側の処理 */
-			NSLog("I am SASOWEE!")
-        }
-*/
 	}
 	
 	/* 位置情報取得成功時に実行される関数 */
