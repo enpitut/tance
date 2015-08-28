@@ -18,7 +18,7 @@ import java.util.Iterator;
  */
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
-    private NotificationManager mNotificationManager;
+    private static NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
 
     public GcmIntentService() {
@@ -57,7 +57,7 @@ public class GcmIntentService extends IntentService {
 
     }
 
-    private void sendNotification(String msg) {
+    public void sendNotification(String msg) {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
