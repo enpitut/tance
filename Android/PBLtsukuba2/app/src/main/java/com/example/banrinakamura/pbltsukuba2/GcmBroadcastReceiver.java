@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,21 +21,33 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        System.out.println("in receiver");
+        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
+        String messageType = gcm.getMessageType(intent);
+        System.out.println("xxxxxxxxx" + intent.getExtras().toString());
 
+        System.out.println("xxxxxx name = "+ intent.getStringExtra("name"));
+        System.out.println("xxxxxx message = "+ intent.getStringExtra("message"));
+//        try {
+//
+//
+//        } catch (JSONException e) {
+//
+//        }
 
-
-        try {
-            String action = intent.getAction();
-            String channel = intent.getExtras().getString("com.nifty.Channel");
-            JSONObject json = new JSONObject(intent.getExtras().getString("com.nifty.Data"));
-
-            Iterator itr = json.keys();
-            while (itr.hasNext()) {
-                String key = (String) itr.next();
-            }
-        } catch (JSONException e) {
-            // エラー処理
-        }
+//        try {
+//            String action = intent.getAction();
+//            String channel = intent.getExtras().getString("com.nifty.Channel");
+//            JSONObject json = new JSONObject(intent.getExtras().getString("com.nifty.Data"));
+//
+//            Iterator itr = json.keys();
+//            while (itr.hasNext()) {
+//                String key = (String) itr.next();
+//            }
+//        } catch (JSONException e) {
+//            System.out.println("receive failed");
+//        // エラー処理
+//        }
 
 
         // Explicitly specify that GcmMessageHandler will handle the intent.

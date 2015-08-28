@@ -54,12 +54,17 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.9.1.1)
+    commander (4.3.5)
+      highline (~> 1.7.2)
     debug_inspector (0.0.2)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     equalizer (0.0.11)
     erubis (2.7.0)
     execjs (2.6.0)
+    gcm (0.1.0)
+      httparty
+      json
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     grape (0.13.0)
@@ -73,6 +78,13 @@ GEM
       rack-mount
       virtus (>= 1.0.0)
     hashie (3.4.2)
+    highline (1.7.3)
+    houston (2.2.3)
+      commander (~> 4.1)
+      json
+    httparty (0.13.5)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
     i18n (0.7.0)
     ice_nine (0.11.1)
     jbuilder (2.3.1)
@@ -157,7 +169,7 @@ GEM
       coffee-rails
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    uglifier (2.7.1)
+    uglifier (2.7.2)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
     virtus (1.0.5)
@@ -177,7 +189,9 @@ PLATFORMS
 DEPENDENCIES
   byebug
   coffee-rails (~> 4.1.0)
+  gcm
   grape
+  houston
   jbuilder (~> 2.0)
   jquery-rails
   rails (= 4.2.3)

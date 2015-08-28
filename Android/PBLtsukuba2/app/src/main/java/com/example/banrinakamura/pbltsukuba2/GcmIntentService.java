@@ -49,7 +49,7 @@ public class GcmIntentService extends IntentService {
                 }
 
                 //通知バーに表示
-                sendNotification("Received Message");
+                //sendNotification("test push notification");
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);

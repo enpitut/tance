@@ -11,9 +11,9 @@ import CoreLocation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
-
     var window: UIWindow?
     var viewController2: ViewController2!
+	var timer: NSTimer!
 
 	/* 位置情報取得のための変数 */
 	var lm: CLLocationManager!
@@ -29,6 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 		UIApplication.sharedApplication().registerUserNotificationSettings(settins)
 		// バックグラウンドで実行されるインターバルを指定
 		//UIApplication.sharedApplication().setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
+
 		return true
 	}
 	
@@ -41,18 +42,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 	/* デバイストークン取得 */
 	func application( application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData ) {
 		// <>と" "(空白)を取る
-		
 		let characterSet: NSCharacterSet = NSCharacterSet( charactersInString: "<>" )
 		let deviceTokenString: String = ( deviceToken.description as NSString )
 			.stringByTrimmingCharactersInSet( characterSet )
 			.stringByReplacingOccurrencesOfString( " ", withString: "" ) as String
 		NSLog(deviceTokenString)
 		
+		/* 位置情報を取得 */
+		lm = CLLocationManager();
+		longitude = CLLocationDegrees();
+		latitude = CLLocationDegrees();
+		
+		lm.delegate = self
+		lm.requestAlwaysAuthorization()
+		
+		//位置情報の精度
+		//lm.desiredAccuracy = kCLLocationAccuracyBest
+		//位置情報取得間隔(m) 100m間隔で位置情報を更新
+		lm.distanceFilter = 100
+		
+		lm.allowDeferredLocationUpdatesUntilTraveled(CLLocationDistanceMax, timeout: 3)
+		
+		lm.pausesLocationUpdatesAutomatically = false
+		lm.startUpdatingLocation()
+		
+	}
+	
+	func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+		print(error)
 	}
 
     func applicationWillResignActive(application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+		/* アクティブからホームボタンを押してバックグラウンドに切り替わる瞬間の処理 */
     }
 
     func applicationDidEnterBackground(application: UIApplication) {
@@ -73,25 +94,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     }
 	
 	func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-		print(application.applicationState)
+		print(userInfo)
+		print(userInfo["inviter"]) // 誘った人の名前
+		print(userInfo["invitee"]) // 誘われた人の名前
+		print(userInfo["stauts"]) // 誘われた人が行けるかどうか
 		switch(application.applicationState) {
 		case .Active:
 			NSLog("Active!")
 		case .Background:
 			NSLog("Background..")
+			/* バックグラウンド処理 */
 			
-			/* 位置情報を取得 */
-			/*
-			
-			lm.delegate = self
-			lm.requestAlwaysAuthorization()
-			
-			lm.desiredAccuracy = kCLLocationAccuracyBest
-			lm.distanceFilter = 1000
-			
-			lm.pausesLocationUpdatesAutomatically = false
-			lm.startUpdatingLocation()
-			*/
+			if(userInfo["invitee"] == nil){
+				// 私は「さそわー」です（誘う人）
+			}else{
+				// 私は「さそうぃー」です（誘われる人）
+			}
 			
 		case .Inactive:
 			NSLog("Inactive")
@@ -119,10 +137,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 	}
 	
 	/* 位置情報取得成功時に実行される関数 */
-	func locationManager(manager: CLLocationManager, didUpdateToLocation newLocation: CLLocation, fromLocation oldLocation: CLLocation){
-		latitude = newLocation.coordinate.latitude
-		longitude = newLocation.coordinate.longitude
+	func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+		
+		latitude = locations[0].coordinate.latitude
+		longitude = locations[0].coordinate.longitude
 		NSLog("latitude: \(latitude) , longitude: \(longitude)")
+		// LocationManagerを停止させる
 		//lm.stopUpdatingLocation()
 		
 		// 中心点からの距離でキャンパス内にいるかどうか判定
@@ -131,7 +151,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 		let current: CLLocation = CLLocation(latitude: latitude, longitude: longitude)
 		let center: CLLocation = CLLocation(latitude: c_latitude, longitude: c_longitude)
 		let distance = center.distanceFromLocation(current)
-		NSLog("\(distance)m")
+		//NSLog("\(distance)m")
 		if(distance < 1000){ // 1km以内
 			NSLog("キャンパス内にいます")
 		}else{

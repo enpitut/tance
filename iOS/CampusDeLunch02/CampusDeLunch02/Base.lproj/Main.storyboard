@@ -24,6 +24,7 @@
                                 <rect key="frame" x="80" y="203" width="160" height="161"/>
                                 <state key="normal" image="btn_main"/>
                                 <connections>
+                                    <action selector="pushBtn:" destination="BYZ-38-t0r" eventType="touchUpInside" id="lRH-Ps-eoJ"/>
                                     <segue destination="pAY-kl-jB9" kind="show" id="5oh-mW-u4M"/>
                                 </connections>
                             </button>
