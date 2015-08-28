@@ -11,17 +11,17 @@ import CoreLocation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
-
     var window: UIWindow?
-	
+    var viewController2: ViewController2!
 	var timer: NSTimer!
 
 	/* 位置情報取得のための変数 */
 	var lm: CLLocationManager!
 	var latitude: CLLocationDegrees!
 	var longitude: CLLocationDegrees!
-	
-	func application( application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    let userName = "JunObata"
+    var userInfoTest:[String:String] = ["inviter":"JunObata","invitee":"Akki", "status":"1"]
+    func application( application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		
 		let types : UIUserNotificationType =
 		[UIUserNotificationType.Badge, UIUserNotificationType.Alert, UIUserNotificationType.Sound]
@@ -114,6 +114,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 		case .Inactive:
 			NSLog("Inactive")
 		}
+        
+        let inviter = userInfo["inviter"]! as! String
+        let invitee = userInfo["invitee"]! as! String
+        let status = userInfo["status"]! as! Int
+//        NSLog("inviter = " + inviter + " invitee= " + invitee + " status = " + status)
+        if inviter == userName{
+            if status == 1{
+                //参加できる人の処理
+                let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                appDelegate.viewController2.refreshCell("name",status: 1)
+            }else{
+                //参加できない人の処理
+                let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                appDelegate.viewController2.refreshCell("name",status: 1)
+            }
+        }else{
+
+        }
+//        NSDictionary *inviter = [userInfo objectForKey:@"inviter"];
+        
 	}
 	
 	/* 位置情報取得成功時に実行される関数 */
