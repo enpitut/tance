@@ -27,7 +27,7 @@ class ViewController: UIViewController {
 	
 	/* お誘いボタンをした時に実行される処理 */
 	@IBAction func pushBtn(sender: AnyObject) {
-		
+		/* POSTされないように一時的にコメントアウトしています
 		let delegate: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 		let myName: String = delegate.myName!
 		let str = "inviter=" + myName
@@ -49,7 +49,7 @@ class ViewController: UIViewController {
 			NSLog("\(error)")
 			return
 		}
-		
+		*/
 	}
 	
 	/* スイッチに変更があった時の処理 */
@@ -65,77 +65,61 @@ class ViewController: UIViewController {
  *
  */
 class ViewController2: UIViewController, UITableViewDataSource, UITableViewDelegate {
+	
+	var friends:[Friend] = [Friend]()
+	
     @IBOutlet weak var tableView: UITableView!
-    
-    var friends:[Friend] = [Friend]()
-    
+	
+	/* 戻るボタン */
+	@IBAction func prevBtn(sender: AnyObject) {
+		let firstViewController: ViewController = self.storyboard?.instantiateViewControllerWithIdentifier("ViewController1") as! ViewController
+		self.presentViewController(firstViewController, animated: false, completion: nil)
+		// フレンドリストの初期化
+		appDel.friendList = [Friend]()
+	}
+	
+	/* グローバル変数をもつインスタンス */
+	let appDel:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+	
     override func viewDidLoad() {
         super.viewDidLoad()
-        let appDelegate:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        appDelegate.viewController2 = self
-        self.setupFriends()
-        /*
-        self.tableView?.delegate = self
-        self.tableView?.dataSource = self
-		*/
+        //let appDel:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+		self.navigationController?.popViewControllerAnimated(true)
+        tableView?.delegate = self
+        tableView?.dataSource = self
+		
+		// バックグラウンドからのTableView更新ができないため、タイマーでフレンド情報を取得する
+		NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: "onUpdate:", userInfo: nil, repeats: true)
     }
+	
+	// タイマーによる定期更新される処理
+	func onUpdate(timer : NSTimer){
+		friends = appDel.friendList
+		self.tableView.reloadData()
+	}
+	
+	override func viewWillAppear(animated: Bool) {
+		tableView?.reloadData()
+		super.viewWillAppear(true)
+	}
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    func setupFriends() {
-		let f1 = Friend(name: "obata", status: "1")
-		let f2 = Friend(name: "banri", status: "0")
-		let f3 = Friend(name: "haya", status: "1")
-		let f4 = Friend(name: "moriya", status: "0")
-		
-        friends.append(f1)
-        friends.append(f2)
-        friends.append(f3)
-		friends.append(f4)
-    }
-	
-	/* 友達追加処理 */
-	func addFriend(name: String, status: String){
-		let f = Friend(name: name, status: status)
-		friends.append(f)
-	}
-	
-	/* 友達一覧更新 */
-	func updateFriend(){
-		self.tableView?.delegate = self
-		self.tableView?.dataSource = self
-	}
 	
 	/* Table View に関する処理 */
-	// セクション数
-	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-		return 1
-	}
-	
-	// セルの行数(必須)
+	// セルの行数（必須）
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return friends.count
 	}
 	
-	// セルの内容を変更
+	// セルの内容を変更（必須）
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
 		let cell: CustomCell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath:  indexPath) as! CustomCell
 		cell.setCell(friends[indexPath.row])
 		return cell
 	}
-    func refreshCell(name: String, status: Int){
-        if status == 1{
-            //参加するとき
-            
-        }else{
-            //不参加のとき
-            
-        }
-        
-    }
 }
 
 
