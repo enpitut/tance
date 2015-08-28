@@ -1,6 +1,9 @@
 package com.example.banrinakamura.pbltsukuba2;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +11,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 import android.widget.Switch;
@@ -26,9 +31,10 @@ import java.util.Iterator;
 
 public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements LocationListener {
 
+
     // GPS用
     private LocationManager mLocationManager;
-
+    private Context mContext;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -40,15 +46,14 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         System.out.println("xxxxxx name = " + intent.getStringExtra("name"));
         System.out.println("xxxxxx message = " + intent.getStringExtra("message"));
 
-
+        mContext = context;
 
         mLocationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         // GPS
         //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         //Wifi
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-
-
+        
 
         //double lat=Double.valueOf(locationManager.getLatitude());
         //double lon=Double.valueOf(locationManager.getLongitude());
@@ -92,6 +97,8 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
 
     @Override
     public void onLocationChanged(Location location) {
+
+        System.out.println("onLocationChangedに行きました。");
         // GPS
         double lat = location.getLatitude();
         double lng = location.getLongitude();
@@ -112,11 +119,33 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         Log.v("Kakudo2", "results[2]: " + results[2]); // 終点から始点までの方位角
 
        boolean switchStatement = MainActivity.getSwitchstatement();
+        Log.v("Switch", "switchStatement: " + switchStatement); // スイッチ ONはtrue OFFはfalse
+
+       int flag;
+        if(results[0]<=500 && switchStatement==true){
+            flag = 1;
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
+
+            builder.setSmallIcon(R.drawable.ic_launcher);
+
+            NotificationManagerCompat manager = NotificationManagerCompat.from(mContext);
+//            manager.notify(NOTIFICATION_MINIMUM_ID, builder.build());
+            manager.notify(1, builder.build());
+
+        }else{
+            flag = 0;
+        }
+
+        Log.v("OKorNG", "flag: " + flag); //誘いOK flag=1  誘いNG flag=0
+
+
 
 
 
         mLocationManager.removeUpdates(this);
     }
+
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
