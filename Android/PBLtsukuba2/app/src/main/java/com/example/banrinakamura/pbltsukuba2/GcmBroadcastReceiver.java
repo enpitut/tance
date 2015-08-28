@@ -40,14 +40,15 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         System.out.println("xxxxxx name = " + intent.getStringExtra("name"));
         System.out.println("xxxxxx message = " + intent.getStringExtra("message"));
 
+        //コールバック用変数
+        _myClassCallbacks.callbackMethod(intent);
 
 
-        mLocationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         // GPS
         //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         //Wifi
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-
 
 
         //double lat=Double.valueOf(locationManager.getLatitude());
@@ -55,8 +56,6 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
 
         //System.out.println(lat);
         //System.out.println(lon);
-
-
 
 
 //        try {
@@ -111,8 +110,7 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         Log.v("Kakudo1", "results[1]: " + results[1]); // 始点から終点までの方位角
         Log.v("Kakudo2", "results[2]: " + results[2]); // 終点から始点までの方位角
 
-       boolean switchStatement = MainActivity.getSwitchstatement();
-
+        boolean switchStatement = MainActivity.getSwitchstatement();
 
 
         mLocationManager.removeUpdates(this);
@@ -131,5 +129,16 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    //コールバック用
+    public interface Callbacks {
+        public void callbackMethod(Intent intent);
+    }
+
+    private Callbacks _myClassCallbacks;
+
+    public void setCallbacks(Callbacks myClassCallbacks) {
+        _myClassCallbacks = myClassCallbacks;
     }
 }
