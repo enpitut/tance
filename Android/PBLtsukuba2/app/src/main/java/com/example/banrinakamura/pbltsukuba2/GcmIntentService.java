@@ -25,7 +25,7 @@ import java.util.logging.LogRecord;
  */
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
-    private NotificationManager mNotificationManager;
+    private static NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
 
     //コールバックインターフェース設定
@@ -75,7 +75,7 @@ public class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void sendNotification(String msg) {
+    public void sendNotification(String msg) {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
