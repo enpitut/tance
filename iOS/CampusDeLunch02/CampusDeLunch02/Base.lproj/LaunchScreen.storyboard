@@ -14,17 +14,24 @@
                         <viewControllerLayoutGuide type="bottom" id="xb3-aO-Qok"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="icon" translatesAutoresizingMaskIntoConstraints="NO" id="rzC-FF-PsO">
-                                <rect key="frame" x="84" y="207" width="153" height="153"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon" translatesAutoresizingMaskIntoConstraints="NO" id="rzC-FF-PsO">
+                                <rect key="frame" x="224" y="223" width="153" height="153"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="153" id="Cez-gj-b8d"/>
+                                    <constraint firstAttribute="height" constant="153" id="Tdh-mP-AuC"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="rzC-FF-PsO" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="jDc-bg-jAK"/>
+                            <constraint firstItem="rzC-FF-PsO" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="xiU-l8-Eah"/>
+                        </constraints>
                     </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
