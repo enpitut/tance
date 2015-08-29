@@ -122,7 +122,6 @@ class ViewController2: UIViewController, UITableViewDataSource, UITableViewDeleg
     func refreshCell(name: String, status: Int){
         if status == 1{
             //参加するとき
-            
         }else{
             //不参加のとき
             
