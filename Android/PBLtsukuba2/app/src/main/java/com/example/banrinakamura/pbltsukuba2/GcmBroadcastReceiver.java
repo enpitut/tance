@@ -64,16 +64,14 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         status = intent.getStringExtra("status");
 
 
-
         mContext = context;
 
         mLocationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+
         // GPS
         //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         //Wifi
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-
-
 
 
         // Explicitly specify that GcmMessageHandler will handle the intent.
@@ -111,6 +109,9 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         Log.v("Kakudo2", "results[2]: " + results[2]); // 終点から始点までの方位角
 
         boolean switchStatement = MainActivity.getSwitchstatement();
+
+        mLocationManager.removeUpdates(this);
+
         Log.v("Switch", "switchStatement: " + switchStatement); // スイッチ ONはtrue OFFはfalse
 
         if(results[0]<=500 && switchStatement==true){
@@ -205,4 +206,6 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
     public void onProviderDisabled(String provider) {
 
     }
+
+
 }
