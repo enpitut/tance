@@ -39,7 +39,12 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".GcmIntentService" android:enabled="true"/>
+        <service android:name=".GcmIntentService" android:enabled="true">
+            <intent-filter>
+                <action android:name="com.example.banrinakamura.pbltsukuba2.IMyAidlService" />
+            </intent-filter>
+        </service>
+
         <receiver
             android:name=".GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">

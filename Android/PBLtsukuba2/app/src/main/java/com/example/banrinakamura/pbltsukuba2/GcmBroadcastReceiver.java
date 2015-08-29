@@ -40,8 +40,6 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
         System.out.println("xxxxxx name = " + intent.getStringExtra("name"));
         System.out.println("xxxxxx message = " + intent.getStringExtra("message"));
 
-        //コールバック用変数
-        _myClassCallbacks.callbackMethod(intent);
 
 
         mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -131,14 +129,5 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
 
     }
 
-    //コールバック用
-    public interface Callbacks {
-        public void callbackMethod(Intent intent);
-    }
 
-    private Callbacks _myClassCallbacks;
-
-    public void setCallbacks(Callbacks myClassCallbacks) {
-        _myClassCallbacks = myClassCallbacks;
-    }
 }

@@ -52,7 +52,7 @@ public class MainActivity extends Activity implements LocationListener {
     public static Switch sw1;
 
     /** Google Cloud Messagingオブジェクト */
-    private GoogleCloudMessaging gcm;
+    private static GoogleCloudMessaging gcm;
     public String regid = "";
     /** コンテキスト */
     private Context context;
@@ -292,4 +292,5 @@ public class MainActivity extends Activity implements LocationListener {
 
         return sw1.isChecked();
     }
+
 }
