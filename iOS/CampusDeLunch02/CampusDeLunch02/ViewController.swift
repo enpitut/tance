@@ -16,7 +16,7 @@ class ViewController: UIViewController {
 	
     override func viewDidLoad() {
         super.viewDidLoad()
-		
+		appDel.waitState = true
 		// バッジの数を０にする
 		UIApplication.sharedApplication().applicationIconBadgeNumber = 0
     }
@@ -33,7 +33,6 @@ class ViewController: UIViewController {
 	 */
 	/* お誘いボタンをした時に実行される処理 */
 	@IBAction func pushBtn(sender: AnyObject) {
-		/* POSTされないように一時的にコメントアウトしています
 		let delegate: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 		let myName: String = delegate.myName!
 		let str = "inviter=" + myName
@@ -55,7 +54,6 @@ class ViewController: UIViewController {
 			NSLog("\(error)")
 			return
 		}
-		*/
 	}
 	
 	/* スイッチに変更があった時の処理 */
