@@ -14,12 +14,18 @@ class CampusDeLunch02UITests: XCTestCase {
         super.setUp()
         
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        
+		
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
         // UI tests must launch the application that they test. Doing this in setup will make sure it happens for each test method.
+		   if #available(iOS 9.0, *) {
+		       XCUIApplication().launch()
+		   } else {
+		       // Fallback on earlier versions
+		   }
+
     }
-    
+	
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()

@@ -19,8 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -36,7 +38,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements LocationListener {
 
     private final String PROJECT_ID = "9647833057";
     AsyncTask<Void, Void, String> registtask = null;
@@ -45,12 +47,14 @@ public class MainActivity extends Activity {
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
+    public static Switch sw1;
 
     /** Google Cloud Messagingオブジェクト */
     private GoogleCloudMessaging gcm;
     public String regid = "";
     /** コンテキスト */
     private Context context;
+
 
     @Override
     public void onStart() {
@@ -218,6 +222,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sw1 = (Switch) findViewById(R.id.switch1);
+
         /*context = getApplicationContext();
         gcm = GoogleCloudMessaging.getInstance(this);
         registerInBackground();*/
@@ -259,4 +265,28 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+   public static boolean getSwitchstatement(){
+
+        return sw1.isChecked();
+    }
 }
