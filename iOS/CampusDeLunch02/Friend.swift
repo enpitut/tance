@@ -10,12 +10,12 @@ import Foundation
 
 class Friend : NSObject {
 	var name: NSString
-	var imageUrl: NSURL?
-	var checked: Bool
+	//var imageUrl: NSURL?
+	var status: String
 	
-	init(name: String, imageUrl: NSURL?, checked: Bool){
+	init(name: String, status: String){
 		self.name = name
-		self.imageUrl = imageUrl
-		self.checked = checked
+		//self.imageUrl = imageUrl
+		self.status = status
 	}
 }

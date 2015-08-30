@@ -12,7 +12,6 @@ import CoreLocation
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
 
-	
     var window: UIWindow?
     var viewController2: ViewController2!
 	var timer: NSTimer!
@@ -21,18 +20,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 	var lm: CLLocationManager!
 	var latitude: CLLocationDegrees!
 	var longitude: CLLocationDegrees!
-	var current: CLLocation!
+//	var current: CLLocation!
 	// 筑波大学中心地点
 	let c_latitude = 36.1104929
 	let c_longitude = 140.0994325
-	var center: CLLocation!
+//	var center: CLLocation!
 	// 2点間の距離と閾値半径（m）
 	var distance: Double = 0.0
 	let radius: Double = 500.0
 	// 自分の名前(各自自分の名前を設定する)
-	let myName: String? = "Akihisa Kodera"
-    let userName = "JunObata"
-    var userInfoTest:[String:String] = ["inviter":"JunObata","invitee":"Akki", "status":"1"]
+	let myName: String? = "aki"
+	// フレンドリスト
+	var friendList:[Friend] = [Friend]()
+	// お誘い待ちがどうかの状態
+	var waitState: Bool! = true
+
 
 	func application( application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		
@@ -107,59 +109,96 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     }
 	
 	func application(application: UIApplication, var didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+		NSLog("PUSH通知を受け取りました")
 		print(userInfo)
 		print(userInfo["inviter"]) // 誘った人の名前
 		print(userInfo["invitee"]) // 誘われた人の名前
-		print(userInfo["stauts"]) // 誘われた人が行けるかどうか
+		print(userInfo["status"]) // 誘われた人が行けるかどうか
+		// 送信用パラメータ
+		let inviter: String = userInfo["inviter"] as! String
+		let invitee: String = userInfo["invitee"] as! String
+		var status: NSString
+		status = userInfo["status"] as! NSString
+		
+		// プッシュ通知が来たときデバイスの状況に合わせて振り分け
 		switch(application.applicationState) {
 		case .Active:
+			/* アクティブ時 処理 */
 			NSLog("Active!")
-		case .Background:
-			NSLog("Background..")
-			/* バックグラウンド処理 */
+			/*
+			 *
+			 * Step.4 Server -> Device(Sasower)
+			 *
+			 */
+			if inviter == myName {
+				// 私は「さそわー」です（誘う人）
+				NSLog("I am SASOWER.")
+				// 相手の参加/不参加に関わらずフレンドリストに追加
+				let f = Friend(name: invitee, status: status as String)
+				friendList.append(f)
+			}
 			
-			if(userInfo["invitee"] == nil){
+		case .Background:
+			/* バックグラウンド時 処理 */
+			NSLog("Background..")
+			/*
+			 *
+			 * Step.2 Server -> Device(Sasowee)
+			 *
+			 */
+			if invitee == myName {
 				// 私は「さそうぃー」です（誘われる人）
-				userInfo["invitee"] = myName
+				NSLog("I am SASOWEE.")
 				
 				// 中心点からの距離でキャンパス内にいるかどうか判定
-				current = CLLocation(latitude: latitude, longitude: longitude)
-				center = CLLocation(latitude: c_latitude, longitude: c_longitude)
+				let current = CLLocation(latitude: latitude, longitude: longitude)
+				let center = CLLocation(latitude: c_latitude, longitude: c_longitude)
 				distance = center.distanceFromLocation(current)
-				//NSLog("\(distance)m")
-				if(distance < 1000){ // 1km以内
+				
+				if(distance < radius) && (waitState == true){
+					// キャンパス内かつ待っている状態
 					NSLog("キャンパス内にいます")
+					status = "1"
 				}else{
-					NSLog("キャンパス外です")
+					// キャンパス外または待ち状態でない
+					NSLog("キャンパス外であるか待ち状態ではありません")
+					status = "0"
 				}
 				
-			}else{
-				// 私は「さそわー」です（誘う人）
+				
+				/*
+				 *
+				 * Step.3 Device(Sasowee) -> Server
+				 *
+				 */
+				/* パラメータをポストする */
+				let postParam = "inviter=" + inviter + "&invitee=" + invitee + "&status=" + String(status)
+				NSLog("\(postParam)");
+				let strData = postParam.dataUsingEncoding(NSUTF8StringEncoding)
+				
+				//let url = NSURL(string: "http://153.121.59.91/tance/index.php")
+				let url = NSURL(string: "http://210.140.68.18/api/reply")
+				let request = NSMutableURLRequest(URL: url!)
+				
+				request.HTTPMethod = "POST"
+				request.HTTPBody = strData
+				
+				// PHP側でreturnされた値を取得
+				do{
+					let data: NSData = try NSURLConnection.sendSynchronousRequest(request, returningResponse: nil)
+					NSLog("requestしました")
+					let myData:NSString = NSString(data:data, encoding: 1)!
+					NSLog("api/reply: \(myData)")
+				}catch let error{
+					NSLog("\(error)")
+					return
+				}
 			}
 			
 		case .Inactive:
+			/* インアクティブ時 処理 */
 			NSLog("Inactive")
 		}
-        
-        let inviter = userInfo["inviter"]! as! String
-        let invitee = userInfo["invitee"]! as! String
-        let status = userInfo["status"]! as! Int
-//        NSLog("inviter = " + inviter + " invitee= " + invitee + " status = " + status)
-        if inviter == userName{
-            if status == 1{
-                //参加できる人の処理
-                let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                appDelegate.viewController2.refreshCell("name",status: 1)
-            }else{
-                //参加できない人の処理
-                let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                appDelegate.viewController2.refreshCell("name",status: 1)
-            }
-        }else{
-
-        }
-//        NSDictionary *inviter = [userInfo objectForKey:@"inviter"];
-        
 	}
 	
 	/* 位置情報取得成功時に実行される関数 */
@@ -174,7 +213,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 	
 	/* 位置情報取得失敗時に実行される関数 */
 	func locationManager(manager: CLLocationManager, didFailWithError error: NSError){
-		NSLog("Error")
+		NSLog("\(error)")
 	}
 }
 
