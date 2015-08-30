@@ -10,6 +10,9 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.StrictMode;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -25,6 +28,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,10 +42,18 @@ public class SubActivity extends Activity {
 
     private IMyAidlService serviceIf;
 
+    //結果表示用
+    private ListView showlist;
+    ArrayList<Map<String,Object>> listmap = new ArrayList<Map<String, Object>>();
+    SimpleAdapter adapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.sub);
+        setContentView(R.layout.sub);
+
+        //表示リストセット
+        showlist = (ListView) findViewById(R.id.listView);
 
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
 
@@ -115,6 +127,19 @@ public class SubActivity extends Activity {
             System.out.println(ex);
         }
 
+        // TODO 文字列から生成した配列に対応する画像のあてはめ
+
+        // リストビューに渡すアダプタを生成
+        adapter = new SimpleAdapter(
+                this,
+                listmap,//ArrayList
+                R.layout.list,//ListView内の1項目を定義したxml
+        new String[] { "img", "name","status" },//mapのキー
+        new int[] {R.id.img, R.id.name, R.id.status });//list.xml内のid
+
+        // リストビューにデータを設定
+        showlist.setAdapter(adapter);
+
 
 
         /*//コールバック
@@ -138,7 +163,7 @@ public class SubActivity extends Activity {
     protected void onDestroy(){
         super.onDestroy();
         //サービスアンバインド
-        unbindService(conn);
+        //unbindService(conn);
     }
 
 
