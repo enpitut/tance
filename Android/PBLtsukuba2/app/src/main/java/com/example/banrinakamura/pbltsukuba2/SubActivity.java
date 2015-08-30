@@ -10,6 +10,9 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.StrictMode;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -25,6 +28,9 @@ import org.apache.http.util.EntityUtils;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Owner_2 on 2015/08/24.
@@ -36,10 +42,18 @@ public class SubActivity extends Activity {
 
     private IMyAidlService serviceIf;
 
+    //結果表示用
+    private ListView showlist;
+    ArrayList<Map<String,Object>> listmap = new ArrayList<Map<String, Object>>();
+    SimpleAdapter adapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.sub);
+        setContentView(R.layout.sub);
+
+        //表示リストセット
+        showlist = (ListView) findViewById(R.id.listView);
 
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
 
@@ -68,15 +82,63 @@ public class SubActivity extends Activity {
 
         //サーバへのGET(さそわーとして)
         try {
+            String name[] = new String[50];
+            String status[] = new String[50];
+
+
             HttpClient httpGetreq = new DefaultHttpClient();
             // 誘われる人リスト
             HttpGet httpGet = new HttpGet("http://210.140.68.18/api/status");
             HttpResponse httpResponse = httpGetreq.execute(httpGet);
             String str = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
             Log.d("HTTP", str);
+
+            int i, n, count=0;
+            for(i=0; ;i++) {
+                n = str.indexOf("invitee");
+                if(n == -1){
+                    break;
+                }
+                str = str.substring(n + 10);
+
+                n = str.indexOf("status");
+                name[i] = str.substring(0, n - 3);
+                //System.out.println(name[i]);
+
+                str = str.substring(n + 9);
+                status[i] = str.substring(0,1);
+                //System.out.println(status[i]);
+
+                count++;
+            }
+
+            HashMap<String, String> namestatus = new HashMap<String, String>();
+            for (i=0;i<count;i++) {
+                namestatus.put(name[i], status[i]);
+            }
+            //スイッチON status=1, スイッチOFF status=0, マップにいない status=null
+            System.out.println("akiのstatus:" + namestatus.get("aki"));
+            System.out.println("hayaのstatus:" + namestatus.get("haya"));
+            System.out.println("moriyaのstatus:" + namestatus.get("moriya"));
+            System.out.println("obataのstatus:" + namestatus.get("obata"));
+
+
         } catch(Exception ex) {
             System.out.println(ex);
         }
+
+        // TODO 文字列から生成した配列に対応する画像のあてはめ
+
+        // リストビューに渡すアダプタを生成
+        adapter = new SimpleAdapter(
+                this,
+                listmap,//ArrayList
+                R.layout.list,//ListView内の1項目を定義したxml
+        new String[] { "img", "name","status" },//mapのキー
+        new int[] {R.id.img, R.id.name, R.id.status });//list.xml内のid
+
+        // リストビューにデータを設定
+        showlist.setAdapter(adapter);
 
 
 
@@ -101,7 +163,7 @@ public class SubActivity extends Activity {
     protected void onDestroy(){
         super.onDestroy();
         //サービスアンバインド
-        unbindService(conn);
+        //unbindService(conn);
     }
 
 
