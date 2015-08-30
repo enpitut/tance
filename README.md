@@ -47,11 +47,11 @@
 
 
 
-### Home画面 - お誘いを待っている状態
+##### Home画面 - お誘いを待っている状態
 <img src="./img/view_home_on.jpg" width="200px">
 
-### Home画面 - お誘いを待っていない状態
+##### Home画面 - お誘いを待っていない状態
 <img src="./img/view_home_off.jpg" width="200px">
 
-### List画面 - 友人の状態が一覧表示される
+##### List画面 - 友人の状態が一覧表示される
 <img src="./img/view_list.jpg" width="200px">
