@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -14,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -28,6 +28,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -122,25 +123,35 @@ public class SubActivity extends Activity {
             System.out.println("moriyaのstatus:" + namestatus.get("moriya"));
             System.out.println("obataのstatus:" + namestatus.get("obata"));
 
+            // 生成した配列に対応からビューに渡す値用Map"list"作成
+            for (Map.Entry<String, String> e : namestatus.entrySet())  {
+                Map data = new HashMap();
+                String imgfilename = "thumb_" + e.getKey();
+                data.put("img", getResources().getIdentifier(imgfilename, "drawable" ,getPackageName()));
+                data.put("name", e.getKey());
+                if(e.getValue().equals("1")){
+                    data.put("status", R.drawable.icon_tick);
+                }else{
+                    data.put("status", R.drawable.icon_not);
+                }
+                listmap.add(data);
+            }
+
+
+            // リストビューに渡すアダプタを生成
+            adapter = new SimpleAdapter(
+                    this,
+                    listmap,//ArrayList
+                    R.layout.list,//ListView内の1項目を定義したxml
+                    new String[] { "img", "name","status" },//mapのキー
+                    new int[] {R.id.img, R.id.name, R.id.status });//list.xml内のid
+
+            // リストビューにデータを設定
+            showlist.setAdapter(adapter);
 
         } catch(Exception ex) {
             System.out.println(ex);
         }
-
-        // TODO 文字列から生成した配列に対応する画像のあてはめ
-
-        // リストビューに渡すアダプタを生成
-        adapter = new SimpleAdapter(
-                this,
-                listmap,//ArrayList
-                R.layout.list,//ListView内の1項目を定義したxml
-        new String[] { "img", "name","status" },//mapのキー
-        new int[] {R.id.img, R.id.name, R.id.status });//list.xml内のid
-
-        // リストビューにデータを設定
-        showlist.setAdapter(adapter);
-
-
 
         /*//コールバック
         Intent intent = new Intent(this, IMyAidlService.class);
