@@ -29,6 +29,7 @@ import org.apache.http.util.EntityUtils;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -81,12 +82,47 @@ public class SubActivity extends Activity {
 
         //サーバへのGET(さそわーとして)
         try {
+            String name[] = new String[50];
+            String status[] = new String[50];
+
+
             HttpClient httpGetreq = new DefaultHttpClient();
             // 誘われる人リスト
             HttpGet httpGet = new HttpGet("http://210.140.68.18/api/status");
             HttpResponse httpResponse = httpGetreq.execute(httpGet);
             String str = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
             Log.d("HTTP", str);
+
+            int i, n, count=0;
+            for(i=0; ;i++) {
+                n = str.indexOf("invitee");
+                if(n == -1){
+                    break;
+                }
+                str = str.substring(n + 10);
+
+                n = str.indexOf("status");
+                name[i] = str.substring(0, n - 3);
+                //System.out.println(name[i]);
+
+                str = str.substring(n + 9);
+                status[i] = str.substring(0,1);
+                //System.out.println(status[i]);
+
+                count++;
+            }
+
+            HashMap<String, String> namestatus = new HashMap<String, String>();
+            for (i=0;i<count;i++) {
+                namestatus.put(name[i], status[i]);
+            }
+            //スイッチON status=1, スイッチOFF status=0, マップにいない status=null
+            System.out.println("akiのstatus:" + namestatus.get("aki"));
+            System.out.println("hayaのstatus:" + namestatus.get("haya"));
+            System.out.println("moriyaのstatus:" + namestatus.get("moriya"));
+            System.out.println("obataのstatus:" + namestatus.get("obata"));
+
+
         } catch(Exception ex) {
             System.out.println(ex);
         }

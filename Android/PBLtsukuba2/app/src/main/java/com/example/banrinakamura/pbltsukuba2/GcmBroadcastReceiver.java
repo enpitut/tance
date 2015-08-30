@@ -122,7 +122,7 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver implements Lo
 
             builder.setContentTitle("campus dé lunch"); // 1行目
 
-           //builder.setContentText(intent.getStringExtra("inviter") + "さんからお誘いが届きました。"); // 2行目
+           builder.setContentText(inviter + "さんからお誘いが届きました。"); // 2行目
             //builder.setSubText(""); // 3行目
             //builder.setContentInfo("Info"); // 右端
             builder.setWhen(System.currentTimeMillis()); // タイムスタンプ（現在時刻、メール受信時刻、カウントダウンなどに使用）
