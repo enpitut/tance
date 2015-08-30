@@ -45,10 +45,12 @@
             android:text="お誘いを待つ"
             android:id="@+id/textView2"
             android:textColor="#1d44ff"
-            android:layout_gravity="bottom"
+            android:layout_gravity="center_vertical|bottom"
             android:layout_alignParentBottom="true"
             android:layout_alignEnd="@+id/switch1"
             android:gravity="center_horizontal" />
+
+
 
     </LinearLayout>
 
@@ -60,7 +62,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/switch1"
         android:checked="false"
-        android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_weight="1"

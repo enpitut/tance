@@ -127,7 +127,7 @@ public class SubActivity extends Activity {
     protected void onDestroy(){
         super.onDestroy();
         //サービスアンバインド
-        unbindService(conn);
+        //unbindService(conn);
     }
 
 
